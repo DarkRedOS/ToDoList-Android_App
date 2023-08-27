@@ -1,12 +1,19 @@
 package com.example.notepad;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -15,9 +22,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private EditText noteEditText;
-    private TextView displayTextView;
     private Button saveButton;
     private Button clearButton;
+    private ListView notesListView;
+    private NotesListAdapter notesListAdapter;
     private List<String> notesList;
 
     private static final String NOTES_KEY = "notes"; // Key for SharedPreferences
@@ -28,13 +36,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         noteEditText = findViewById(R.id.noteEditText);
-        displayTextView = findViewById(R.id.displayTextView);
         saveButton = findViewById(R.id.saveButton);
         clearButton = findViewById(R.id.clearButton);
+        notesListView = findViewById(R.id.notesListView);
 
         notesList = new ArrayList<>();
+        notesListAdapter = new NotesListAdapter(this, notesList);
+        notesListView.setAdapter(notesListAdapter);
 
-        // Retrieve the notes from SharedPreferences
         SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
         String notes = sharedPreferences.getString(NOTES_KEY, "");
         if (!notes.isEmpty()) {
@@ -42,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             for (String note : noteArray) {
                 notesList.add(note);
             }
-            displayNotes();
+            notesListAdapter.notifyDataSetChanged();
         }
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -50,10 +59,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String note = noteEditText.getText().toString();
                 notesList.add(note);
-                displayNotes();
+                notesListAdapter.notifyDataSetChanged();
                 noteEditText.setText("");
 
-                // Save the notes to SharedPreferences
                 SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
                 editor.putString(NOTES_KEY, String.join(",", notesList));
                 editor.apply();
@@ -64,10 +72,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 notesList.clear();
-                displayNotes();
+                notesListAdapter.notifyDataSetChanged();
                 noteEditText.setText("");
 
-                // Clear the notes from SharedPreferences
                 SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
                 editor.remove(NOTES_KEY);
                 editor.apply();
@@ -75,15 +82,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void displayNotes() {
-        if (notesList.size() == 0) {
-            displayTextView.setText("No notes yet");
-        } else {
-            StringBuilder sb = new StringBuilder();
-            for (String note : notesList) {
-                sb.append(note).append("\n\n");
-            }
-            displayTextView.setText(sb.toString());
+    private class NotesListAdapter extends ArrayAdapter<String> {
+
+        private Context context;
+        private List<String> notes;
+
+        public NotesListAdapter(Context context, List<String> notes) {
+            super(context, R.layout.note_item, notes);
+            this.context = context;
+            this.notes = notes;
+        }
+
+        @NonNull
+        @Override
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View rowView = inflater.inflate(R.layout.note_item, parent, false);
+
+            TextView noteTextView = rowView.findViewById(R.id.noteTextView);
+            Button deleteButton = rowView.findViewById(R.id.deleteButton);
+
+            noteTextView.setText(notes.get(position));
+
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    notes.remove(position);
+                    notifyDataSetChanged();
+
+                    SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
+                    editor.putString(NOTES_KEY, String.join(",", notes));
+                    editor.apply();
+                }
+            });
+
+            return rowView;
         }
     }
 }

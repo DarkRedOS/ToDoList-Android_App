@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,22 +10,20 @@
         android:id="@+id/noteEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter your notes here"
-        android:textColor="#FFFFFF" />
+        android:hint="Enter your to-do list here..."
+        android:textColor="#FFFFFF"
+        android:textColorHighlight="#A400FF"
+        android:textColorHint="#FFFFFF"
+        android:textColorLink="#C076F6" />
 
-    <ScrollView
+    <ListView
+        android:id="@+id/notesListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/displayTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="#FFFFFF" />
-
-    </ScrollView>
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:layout_marginLeft="10dp"/>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -38,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:backgroundTint="#000000"
-            android:text="Save"
+            android:text="Save Your List"
             android:textColor="#FFFFFF" />
 
         <Button
@@ -47,9 +46,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:backgroundTint="#000000"
-            android:text="Clear"
+            android:text="X"
             android:textColor="#FFFFFF" />
 
     </LinearLayout>
+
+
 
 </LinearLayout>
