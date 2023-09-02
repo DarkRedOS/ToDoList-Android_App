@@ -2,18 +2,18 @@
 
 # TO-DO LIST
 
-Simple and minimalistic To-do list android app under 2MB. 
+Simple and minimalistic To-do list Android app under 2MB. 
 Only has 2 options namely "SAVE" & "CLEAR".
 
 ## Installation
 
-Install ToDoList with apk https://github.com/DarkRedOS/APK
+Install ToDoList with APK (https://github.com/DarkRedOS/ToDoList-Android_App/releases/tag/v0.1.0)
 
 ## Deployment
 
 Freakin easy to install...
 ```bash
-  Download apk 
+  Download APK 
   click install
   Give your browser permission to "install from unknown sources"
   Play Store might block it, simply click the below arrow and click "Install anyway"
